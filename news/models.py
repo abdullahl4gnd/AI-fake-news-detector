@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# defines the tables in your database.
+
+# Each class = a database table
+# Each field = a column in that table
+
 class NewsSubmission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions', null=True, blank=True)
     title = models.CharField(max_length=255)

@@ -7,6 +7,7 @@ from .models import NewsSubmission
 from .serializers import NewsSubmissionSerializer
 from rest_framework.decorators import parser_classes
 
+#contains the logic that runs when an API endpoint is called.
 
 @api_view(['GET'])
 def test_news_api(request):
@@ -114,23 +115,3 @@ def delete_submission(request, submission_id):
         status=status.HTTP_200_OK
     )
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_submission_json(request):
-    data = request.data.copy()
-
-    data['text_fake_score'] = 25
-    data['image_fake_score'] = 15
-    data['final_fake_score'] = 21
-    data['credibility_score'] = 79
-    data['final_label'] = 'Fake'
-    data['suspicious_words'] = 'breaking, shocking, unbelievable'
-    data['explanation'] = 'This is a dummy AI explanation for testing the result page.'
-
-    serializer = NewsSubmissionSerializer(data=data)
-
-    if serializer.is_valid():
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

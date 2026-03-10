@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import NewsSubmission
 
+# APIs  read requests
+# APIs  return structured responses
 
 class NewsSubmissionSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False)
