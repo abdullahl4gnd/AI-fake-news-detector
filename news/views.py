@@ -17,7 +17,6 @@ def test_news_api(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])
 def create_submission(request):
     data = request.data.copy()
 
@@ -27,7 +26,7 @@ def create_submission(request):
     data['credibility_score'] = 79
     data['final_label'] = 'Fake'
     data['suspicious_words'] = 'breaking, shocking, unbelievable'
-    data['explanation'] = 'This is a dummy AI explanation for testing the result page.'
+    data['explanation'] = 'testing the result page.'
 
     serializer = NewsSubmissionSerializer(data=data)
 
