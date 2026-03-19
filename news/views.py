@@ -7,7 +7,7 @@ from .models import NewsSubmission
 from .serializers import NewsSubmissionSerializer
 from rest_framework.decorators import parser_classes
 
-#contains the logic that runs when an API endpoint is called.
+# logic that runs when an API endpoint is called.
 
 @api_view(['GET'])
 def test_news_api(request):
