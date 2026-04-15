@@ -1,5 +1,14 @@
 .venv/
+venv/
 __pycache__/
 *.pyc
 .env
 media/
+
+# Notebook outputs
+*.executed.ipynb
+.ipynb_checkpoints/
+
+# Local duplicate model files (keep only Text Model folder copies)
+/best_fake_news_model.pkl
+/tfidf_vectorizer.pkl
