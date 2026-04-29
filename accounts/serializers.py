@@ -1,7 +1,6 @@
 # APIs read and send data
-from django.contrib.auth.models import User
 from rest_framework import serializers
-
+from .models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
