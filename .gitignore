@@ -1,3 +1,4 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
@@ -8,6 +9,25 @@ media/
 *.executed.ipynb
 .ipynb_checkpoints/
 
-# Local duplicate model files (keep only Text Model folder copies)
+# Local duplicate model files
 /best_fake_news_model.pkl
 /tfidf_vectorizer.pkl
+
+# Mobile / Node
+mobile/node_modules/
+mobile/.expo/
+mobile/.env
+mobile/dist/
+
+# Expo
+.expo/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+node_modules/
