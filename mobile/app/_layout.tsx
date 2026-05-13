@@ -14,6 +14,9 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="detect" />
         <Stack.Screen name="result/[id]" />
+        <Stack.Screen name="edit-profile" />
+        <Stack.Screen name="change-password" />
+        <Stack.Screen name="delete-account" />
       </Stack>
       <StatusBar style="light" />
     </AuthProvider>

@@ -47,12 +47,17 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account Settings</Text>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/edit-profile')}
+        >
           <Text style={styles.menuText}>Edit Profile</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/change-password')}        >
           <Text style={styles.menuText}>Change Password</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
@@ -111,6 +116,13 @@ export default function ProfileScreen() {
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => router.push('/delete-account')}
+      >
+        <Text style={styles.deleteText}>Delete Account</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
@@ -207,6 +219,21 @@ const styles = StyleSheet.create({
     borderColor: '#ef4444',
   },
   logoutText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ef4444',
+  },
+  deleteButton: {
+    marginHorizontal: 24,
+    marginBottom: 8,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    backgroundColor: '#1a2942',
+    borderWidth: 1,
+    borderColor: '#ef4444',
+  },
+  deleteText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#ef4444',

@@ -6,6 +6,8 @@ interface User {
   id: number;
   username: string;
   email: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface AuthContextType {
@@ -14,6 +16,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -39,6 +42,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await AsyncStorage.removeItem('refresh_token');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshUser = async () => {
+    try {
+      const response = await authAPI.getProfile();
+      setUser(response.data);
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
     }
   };
 
@@ -80,6 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         register,
         logout,
+        refreshUser,
         isAuthenticated: !!user,
       }}
     >

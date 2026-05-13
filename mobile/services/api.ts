@@ -1,9 +1,9 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://192.168.1.131:8000/api'; // Android emulator localhost
-// const API_BASE_URL = 'http://localhost:8000/api'; // iOS simulator
-// const API_BASE_URL = 'https://your-production-url.com/api'; // Production
+const API_BASE_URL = 'http://192.168.1.131:8000/api';
+// const API_BASE_URL = 'http://localhost:8000/api';
+// const API_BASE_URL = 'https://your-production-url.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -36,6 +36,12 @@ export const authAPI = {
 
   getProfile: () =>
     api.get('/accounts/profile/'),
+
+  changePassword: (current_password: string, new_password: string) =>
+    api.post('/accounts/change-password/', { current_password, new_password }),
+
+  updateProfile: (full_name: string, email: string, phone: string, bio: string) =>
+    api.post('/accounts/update-profile/', { full_name, email, phone, bio }),
 };
 
 // News APIs
