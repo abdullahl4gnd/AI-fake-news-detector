@@ -199,7 +199,7 @@ export default function NewsFeedScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              tint="#2563eb"
+              colors={['#2563eb']}
             />
           }
           ListEmptyComponent={
