@@ -14,6 +14,10 @@ export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
 
+  const displayName = user?.first_name
+    ? `${user.first_name} ${user.last_name}`.trim()
+    : user?.username;
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -37,11 +41,17 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {user?.username?.charAt(0).toUpperCase()}
+            {displayName?.charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={styles.name}>{user?.username}</Text>
+        <Text style={styles.name}>{displayName}</Text>
         <Text style={styles.email}>{user?.email}</Text>
+        {user?.phone_number ? (
+          <Text style={styles.phone}>📞 {user.phone_number}</Text>
+        ) : null}
+        {user?.bio ? (
+          <Text style={styles.bio}>{user.bio}</Text>
+        ) : null}
       </View>
 
       <View style={styles.section}>
@@ -57,7 +67,8 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => router.push('/change-password')}        >
+          onPress={() => router.push('/change-password')}
+        >
           <Text style={styles.menuText}>Change Password</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
@@ -167,6 +178,20 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 14,
     color: '#8b9dc3',
+    marginBottom: 4,
+  },
+  phone: {
+    fontSize: 14,
+    color: '#8b9dc3',
+    marginBottom: 4,
+  },
+  bio: {
+    fontSize: 14,
+    color: '#8b9dc3',
+    textAlign: 'center',
+    marginTop: 8,
+    paddingHorizontal: 24,
+    lineHeight: 20,
   },
   section: {
     padding: 24,

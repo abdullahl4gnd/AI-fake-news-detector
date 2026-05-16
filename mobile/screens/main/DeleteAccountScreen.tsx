@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'expo-router';
+import { authAPI } from '../../services/api';
 
 export default function DeleteAccountScreen() {
   const { logout } = useAuth();
@@ -35,9 +36,7 @@ export default function DeleteAccountScreen() {
           onPress: async () => {
             setLoading(true);
             try {
-              // TODO: Implement API call to delete account
-              await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
-
+              await authAPI.deleteAccount(password);
               Alert.alert(
                 'Account Deleted',
                 'Your account has been permanently deleted.',
@@ -51,8 +50,9 @@ export default function DeleteAccountScreen() {
                   },
                 ]
               );
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete account. Please try again.');
+            } catch (error: any) {
+              const message = error.response?.data?.error || 'Failed to delete account. Please try again.';
+              Alert.alert('Error', message);
             } finally {
               setLoading(false);
             }
@@ -60,10 +60,6 @@ export default function DeleteAccountScreen() {
         },
       ]
     );
-  };
-
-  const handleCancel = () => {
-    router.back();
   };
 
   return (
@@ -75,24 +71,20 @@ export default function DeleteAccountScreen() {
       </View>
 
       <View style={styles.content}>
-        {/* Warning Icon */}
         <View style={styles.iconContainer}>
           <View style={styles.warningIcon}>
             <Text style={styles.warningIconText}>⚠️</Text>
           </View>
         </View>
 
-        {/* Title */}
         <Text style={styles.title}>Delete Account</Text>
 
-        {/* Warning Message */}
         <View style={styles.warningCard}>
           <Text style={styles.warningText}>
             This action is permanent and cannot be undone. Please read carefully before proceeding.
           </Text>
         </View>
 
-        {/* Consequences List */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>What will happen:</Text>
 
@@ -132,7 +124,6 @@ export default function DeleteAccountScreen() {
           </View>
         </View>
 
-        {/* Password Confirmation */}
         <View style={styles.section}>
           <Text style={styles.label}>Confirm your password</Text>
           <TextInput
@@ -149,7 +140,6 @@ export default function DeleteAccountScreen() {
           </Text>
         </View>
 
-        {/* Delete Button */}
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={handleDeleteAccount}
@@ -162,10 +152,9 @@ export default function DeleteAccountScreen() {
           )}
         </TouchableOpacity>
 
-        {/* Cancel Button */}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={handleCancel}
+          onPress={() => router.back()}
           disabled={loading}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>

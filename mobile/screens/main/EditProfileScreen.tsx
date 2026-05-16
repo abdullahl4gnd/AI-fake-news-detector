@@ -21,8 +21,8 @@ export default function EditProfileScreen() {
 
   const [fullName, setFullName] = useState(user?.first_name ? `${user.first_name} ${user.last_name}`.trim() : user?.username || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [bio, setBio] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(user?.phone_number || '');
+  const [bio, setBio] = useState(user?.bio || '');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
 

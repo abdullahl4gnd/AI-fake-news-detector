@@ -21,28 +21,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🏠</Text>,
+          tabBarIcon: () => <Text style={{ fontSize: 22 }}>🏠</Text>,
         }}
       />
       <Tabs.Screen
         name="detect"
         options={{
           title: 'Detect',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🔍</Text>,
+          tabBarIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>,
         }}
       />
       <Tabs.Screen
         name="news"
         options={{
           title: 'News',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>📰</Text>,
+          tabBarIcon: () => <Text style={{ fontSize: 22 }}>📰</Text>,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>👤</Text>,
+          tabBarIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>,
         }}
       />
       <Tabs.Screen

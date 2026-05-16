@@ -12,7 +12,6 @@ const api = axios.create({
   },
 });
 
-// Add auth token to requests
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('access_token');
@@ -26,7 +25,6 @@ api.interceptors.request.use(
   }
 );
 
-// Auth APIs
 export const authAPI = {
   register: (username: string, email: string, password: string) =>
     api.post('/accounts/register/', { username, email, password }),
@@ -42,9 +40,11 @@ export const authAPI = {
 
   updateProfile: (full_name: string, email: string, phone: string, bio: string) =>
     api.post('/accounts/update-profile/', { full_name, email, phone, bio }),
+
+  deleteAccount: (password: string) =>
+    api.post('/accounts/delete-account/', { password }),
 };
 
-// News APIs
 export const newsAPI = {
   createSubmission: (formData: FormData) =>
     api.post('/news/create/', formData, {

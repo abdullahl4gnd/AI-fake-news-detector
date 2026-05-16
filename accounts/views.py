@@ -5,11 +5,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer
-import hashlib
-
-
-def hash_value(value):
-    return hashlib.sha256(value.encode()).hexdigest()
 
 
 @api_view(['GET'])
@@ -64,6 +59,8 @@ def profile_view(request):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'phone_number': user.phone_number or '',
+        'bio': user.bio or '',
     })
 
 
@@ -82,7 +79,6 @@ def update_profile_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Check email not taken by another user
     from django.contrib.auth import get_user_model
     User = get_user_model()
     if User.objects.filter(email=email).exclude(id=user.id).exists():
@@ -91,14 +87,12 @@ def update_profile_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Split full name into first and last
     name_parts = full_name.split(' ', 1)
     user.first_name = name_parts[0]
     user.last_name = name_parts[1] if len(name_parts) > 1 else ''
     user.email = email
-
-    # Hash phone and bio for security before storing in username field
-    # Store hashed metadata in a secure way
+    user.phone_number = phone
+    user.bio = bio
     user.save()
 
     return Response({
@@ -108,6 +102,8 @@ def update_profile_view(request):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'phone_number': user.phone_number or '',
+        'bio': user.bio or '',
     })
 
 
@@ -141,5 +137,30 @@ def change_password_view(request):
 
     return Response(
         {'message': 'Password changed successfully'},
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_account_view(request):
+    user = request.user
+    password = request.data.get('password')
+
+    if not password:
+        return Response(
+            {'error': 'Password is required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if not user.check_password(password):
+        return Response(
+            {'error': 'Incorrect password'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user.delete()
+    return Response(
+        {'message': 'Account deleted successfully'},
         status=status.HTTP_200_OK
     )
