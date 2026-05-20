@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  ActivityIndicator,
+  Animated,
+  Easing,
 } from 'react-native';
 import { newsAPI } from '../../services/api';
 import { useRouter } from 'expo-router';
@@ -15,29 +16,114 @@ import * as ImagePicker from 'expo-image-picker';
 
 type InputMode = 'text' | 'url' | 'image';
 
+const LOADING_MESSAGES = [
+  '🔍 Scanning article...',
+  '🤖 Running AI models...',
+  '📊 Analyzing credibility...',
+  '🧠 Detecting fake patterns...',
+  '✅ Almost done...',
+];
+
 export default function DetectScreen() {
   const [mode, setMode] = useState<InputMode>('text');
   const [articleText, setArticleText] = useState('');
   const [url, setUrl] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
   const router = useRouter();
+
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const messageIndex = useRef(0);
+  const messageInterval = useRef<any>(null);
+
+  useEffect(() => {
+    if (loading) {
+      // Pulse animation
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.2,
+            duration: 800,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Rotate animation
+      Animated.loop(
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+
+      // Cycle through messages
+      messageIndex.current = 0;
+      setLoadingMessage(LOADING_MESSAGES[0]);
+      messageInterval.current = setInterval(() => {
+        messageIndex.current = (messageIndex.current + 1) % LOADING_MESSAGES.length;
+
+        // Fade out
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          setLoadingMessage(LOADING_MESSAGES[messageIndex.current]);
+          // Fade in
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        });
+      }, 1500);
+    } else {
+      pulseAnim.stopAnimation();
+      rotateAnim.stopAnimation();
+      pulseAnim.setValue(1);
+      rotateAnim.setValue(0);
+      if (messageInterval.current) {
+        clearInterval(messageInterval.current);
+      }
+    }
+
+    return () => {
+      if (messageInterval.current) {
+        clearInterval(messageInterval.current);
+      }
+    };
+  }, [loading]);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (!permissionResult.granted) {
       Alert.alert('Permission Required', 'Please allow access to your photos');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
     }
@@ -45,18 +131,15 @@ export default function DetectScreen() {
 
   const takePhoto = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
     if (!permissionResult.granted) {
       Alert.alert('Permission Required', 'Please allow access to your camera');
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
     }
@@ -85,7 +168,6 @@ export default function DetectScreen() {
       const filename = imageUri.split('/').pop() || 'image.jpg';
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : 'image/jpeg';
-
       formData.append('image', {
         uri: imageUri,
         name: filename,
@@ -103,6 +185,44 @@ export default function DetectScreen() {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Animated.View
+          style={[
+            styles.loadingCircleOuter,
+            { transform: [{ scale: pulseAnim }] },
+          ]}
+        >
+          <Animated.View
+            style={[
+              styles.loadingCircleInner,
+              { transform: [{ rotate: spin }] },
+            ]}
+          >
+            <Text style={styles.loadingIcon}>🤖</Text>
+          </Animated.View>
+        </Animated.View>
+
+        <Text style={styles.loadingTitle}>Analyzing Content</Text>
+
+        <Animated.Text style={[styles.loadingMessage, { opacity: fadeAnim }]}>
+          {loadingMessage}
+        </Animated.Text>
+
+        <View style={styles.loadingDots}>
+          <View style={[styles.dot, styles.dot1]} />
+          <View style={[styles.dot, styles.dot2]} />
+          <View style={[styles.dot, styles.dot3]} />
+        </View>
+
+        <Text style={styles.loadingSubtext}>
+          Our AI is working hard to verify this content for you
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -199,11 +319,7 @@ export default function DetectScreen() {
           onPress={handleSubmit}
           disabled={loading}
         >
-          {loading ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <Text style={styles.analyzeButtonText}>Analyze Content</Text>
-          )}
+          <Text style={styles.analyzeButtonText}>Analyze Content</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -214,6 +330,69 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0a1628',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0a1628',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  loadingCircleOuter: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: '#2563eb20',
+    borderWidth: 2,
+    borderColor: '#2563eb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  loadingCircleInner: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#1a2942',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2563eb40',
+  },
+  loadingIcon: {
+    fontSize: 48,
+  },
+  loadingTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 16,
+  },
+  loadingMessage: {
+    fontSize: 16,
+    color: '#2563eb',
+    marginBottom: 24,
+    fontWeight: '600',
+  },
+  loadingDots: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 32,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#2563eb',
+  },
+  dot1: { opacity: 1 },
+  dot2: { opacity: 0.6 },
+  dot3: { opacity: 0.3 },
+  loadingSubtext: {
+    fontSize: 14,
+    color: '#8b9dc3',
+    textAlign: 'center',
+    lineHeight: 22,
   },
   header: {
     padding: 24,

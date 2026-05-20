@@ -14,11 +14,11 @@ export default function Index() {
     const inAuthGroup = segments[0] === '(tabs)';
 
     if (!isAuthenticated && inAuthGroup) {
-      router.replace('/login');
+      router.replace('/onboarding' as any);
     } else if (isAuthenticated && !inAuthGroup) {
       router.replace('/(tabs)');
     } else if (!isAuthenticated) {
-      router.replace('/login');
+      router.replace('/onboarding' as any);
     }
   }, [isAuthenticated, loading, segments]);
 
