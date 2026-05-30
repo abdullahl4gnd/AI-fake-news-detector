@@ -62,8 +62,8 @@ def predict_text(text, confidence_threshold=0.40):
     text_tfidf = vectorizer.transform([text])
     if text_tfidf.nnz == 0:
         return 'Uncertain', 50
-    prob      = best_model.predict_proba(text_tfidf)[0]
-    pred      = best_model.predict(text_tfidf)[0]
+    prob       = best_model.predict_proba(text_tfidf)[0]
+    pred       = best_model.predict(text_tfidf)[0]
     confidence = prob[pred]
     if confidence < confidence_threshold:
         return 'Uncertain', 50
@@ -174,7 +174,7 @@ def create_submission(request):
                 for chunk in image.chunks():
                     tmp.write(chunk)
                 tmp_path = tmp.name
-            results     = reader.readtext(tmp_path)
+            results      = reader.readtext(tmp_path)
             article_text = ' '.join([t for (_, t, c) in results if c > 0.3])
             os.unlink(tmp_path)
         except Exception as e:
@@ -184,10 +184,10 @@ def create_submission(request):
         return Response({'error': 'No text, image, or URL provided'}, status=400)
 
     # Run all models
-    text_label, text_confidence     = predict_text(article_text)
-    sentiment_score, suspicious_words = get_sentiment(article_text)
-    source_score, source_label      = get_source_score(url)
-    credibility_score, final_label  = compute_credibility(
+    text_label, text_confidence        = predict_text(article_text)
+    sentiment_score, suspicious_words  = get_sentiment(article_text)
+    source_score, source_label         = get_source_score(url)
+    credibility_score, final_label     = compute_credibility(
         text_label, text_confidence, sentiment_score, source_score, bool(url)
     )
 
@@ -198,15 +198,18 @@ def create_submission(request):
         f'Sentiment score: {sentiment_score}/100 fake indicators.'
     )
 
-    data = request.data.copy()
-    data['article_text']    = article_text
-    data['text_fake_score'] = text_confidence if text_label == 'Fake' else 100 - text_confidence
-    data['image_fake_score']= 0
-    data['final_fake_score']= 100 - credibility_score
-    data['credibility_score']= credibility_score
-    data['final_label']     = final_label
-    data['suspicious_words']= ', '.join(suspicious_words[:10])
-    data['explanation']     = explanation
+    # Build data dict without copying request.data (fixes image upload bug)
+    data = {
+        'article_text':      article_text,
+        'url':               url or '',
+        'text_fake_score':   text_confidence if text_label == 'Fake' else 100 - text_confidence,
+        'image_fake_score':  0,
+        'final_fake_score':  100 - credibility_score,
+        'credibility_score': credibility_score,
+        'final_label':       final_label,
+        'suspicious_words':  ', '.join(suspicious_words[:10]),
+        'explanation':       explanation,
+    }
 
     serializer = NewsSubmissionSerializer(data=data)
     if serializer.is_valid():
@@ -234,9 +237,9 @@ def dashboard_summary(request):
     latest      = list(submissions.order_by('-created_at').values('id', 'final_label')[:3])
 
     return Response({
-        'total_submissions': total,
-        'fake_count':        fake_count,
-        'real_count':        real_count,
+        'total_submissions':  total,
+        'fake_count':         fake_count,
+        'real_count':         real_count,
         'latest_submissions': latest,
     })
 

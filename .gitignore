@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 .env
 media/
+.venv312
 
 # Notebook outputs
 *.executed.ipynb
