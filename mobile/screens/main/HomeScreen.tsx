@@ -62,21 +62,17 @@ export default function HomeScreen() {
 
   const getLabelColor = (label: string) => {
     switch (label?.toLowerCase()) {
-      case 'real':
-        return '#10b981';
-      case 'fake':
-        return '#ef4444';
-      case 'uncertain':
-        return '#f59e0b';
-      default:
-        return '#8b9dc3';
+      case 'real': return '#10b981';
+      case 'fake': return '#ef4444';
+      case 'uncertain': return '#f59e0b';
+      default: return '#888888';
     }
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2563eb" />
+        <ActivityIndicator size="large" color="#ffffff" />
       </View>
     );
   }
@@ -85,7 +81,7 @@ export default function HomeScreen() {
     <ScrollView
       style={styles.container}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563eb" />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ffffff" />
       }
     >
       <View style={styles.header}>
@@ -114,7 +110,6 @@ export default function HomeScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recent Submissions</Text>
-
         {submissions.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>No submissions yet</Text>
@@ -133,24 +128,12 @@ export default function HomeScreen() {
               onPress={() => router.push(`/result/${submission.id}`)}
             >
               <View style={styles.submissionHeader}>
-                <View
-                  style={[
-                    styles.labelBadge,
-                    { backgroundColor: getLabelColor(submission.final_label) + '20' },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.labelText,
-                      { color: getLabelColor(submission.final_label) },
-                    ]}
-                  >
+                <View style={[styles.labelBadge, { backgroundColor: getLabelColor(submission.final_label) + '20' }]}>
+                  <Text style={[styles.labelText, { color: getLabelColor(submission.final_label) }]}>
                     {submission.final_label?.toUpperCase() || 'PENDING'}
                   </Text>
                 </View>
-                <Text style={styles.scoreText}>
-                  {Math.round(submission.credibility_score)}%
-                </Text>
+                <Text style={styles.scoreText}>{Math.round(submission.credibility_score)}%</Text>
               </View>
               <Text style={styles.articlePreview} numberOfLines={2}>
                 {submission.article_text}
@@ -169,13 +152,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a1628',
+    backgroundColor: '#000000',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0a1628',
+    backgroundColor: '#000000',
   },
   header: {
     padding: 24,
@@ -189,7 +172,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#8b9dc3',
+    color: '#888888',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -199,20 +182,22 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#1a2942',
+    backgroundColor: '#111111',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333333',
   },
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#ffffff',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#8b9dc3',
+    color: '#888888',
   },
   section: {
     padding: 24,
@@ -224,12 +209,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   submissionCard: {
-    backgroundColor: '#1a2942',
+    backgroundColor: '#111111',
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2d4263',
+    borderColor: '#333333',
   },
   submissionHeader: {
     flexDirection: 'row',
@@ -253,12 +238,12 @@ const styles = StyleSheet.create({
   },
   articlePreview: {
     fontSize: 14,
-    color: '#8b9dc3',
+    color: '#888888',
     marginBottom: 8,
   },
   dateText: {
     fontSize: 12,
-    color: '#6b7f9f',
+    color: '#666666',
   },
   emptyState: {
     alignItems: 'center',
@@ -266,17 +251,17 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#8b9dc3',
+    color: '#888888',
     marginBottom: 16,
   },
   emptyButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   emptyButtonText: {
-    color: '#ffffff',
+    color: '#000000',
     fontSize: 14,
     fontWeight: '600',
   },

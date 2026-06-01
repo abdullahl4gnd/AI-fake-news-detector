@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'expo-router';
@@ -24,21 +16,9 @@ export default function RegisterScreen() {
   const router = useRouter();
 
   const handleRegister = async () => {
-    if (!username || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-
+    if (!username || !email || !password || !confirmPassword) { Alert.alert('Error', 'Please fill in all fields'); return; }
+    if (password !== confirmPassword) { Alert.alert('Error', 'Passwords do not match'); return; }
+    if (password.length < 6) { Alert.alert('Error', 'Password must be at least 6 characters'); return; }
     setLoading(true);
     try {
       await register(username, email, password);
@@ -51,10 +31,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <Text style={styles.title}>Create Account</Text>
@@ -64,56 +41,42 @@ export default function RegisterScreen() {
             <TextInput
               style={styles.input}
               placeholder="Username"
-              placeholderTextColor="#8b9dc3"
+              placeholderTextColor="#555555"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
             />
-
             <TextInput
               style={styles.input}
               placeholder="Email"
-              placeholderTextColor="#8b9dc3"
+              placeholderTextColor="#555555"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
             />
-
             <TextInput
               style={styles.input}
               placeholder="Password"
-              placeholderTextColor="#8b9dc3"
+              placeholderTextColor="#555555"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
-
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
-              placeholderTextColor="#8b9dc3"
+              placeholderTextColor="#555555"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry
             />
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleRegister}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <Text style={styles.buttonText}>Sign Up</Text>
-              )}
+            <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
+              {loading ? <ActivityIndicator color="#000000" /> : <Text style={styles.buttonText}>Sign Up</Text>}
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.linkContainer}
-            >
+            <TouchableOpacity onPress={() => router.back()} style={styles.linkContainer}>
               <Text style={styles.linkText}>
                 Already have an account?{' '}
                 <Text style={styles.linkTextBold}>Login</Text>
@@ -127,65 +90,16 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0a1628',
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#8b9dc3',
-    marginBottom: 40,
-    textAlign: 'center',
-  },
-  form: {
-    gap: 16,
-  },
-  input: {
-    backgroundColor: '#1a2942',
-    borderWidth: 1,
-    borderColor: '#2d4263',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: '#ffffff',
-  },
-  button: {
-    backgroundColor: '#2563eb',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  linkContainer: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  linkText: {
-    color: '#8b9dc3',
-    fontSize: 14,
-  },
-  linkTextBold: {
-    color: '#2563eb',
-    fontWeight: '600',
-  },
+  container: { flex: 1, backgroundColor: '#000000' },
+  scrollContent: { flexGrow: 1 },
+  content: { flex: 1, justifyContent: 'center', padding: 24 },
+  title: { fontSize: 32, fontWeight: 'bold', color: '#ffffff', marginBottom: 8, textAlign: 'center' },
+  subtitle: { fontSize: 16, color: '#888888', marginBottom: 40, textAlign: 'center' },
+  form: { gap: 16 },
+  input: { backgroundColor: '#111111', borderWidth: 1, borderColor: '#333333', borderRadius: 12, padding: 16, fontSize: 16, color: '#ffffff' },
+  button: { backgroundColor: '#ffffff', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
+  buttonText: { color: '#000000', fontSize: 18, fontWeight: '600' },
+  linkContainer: { marginTop: 16, alignItems: 'center' },
+  linkText: { color: '#888888', fontSize: 14 },
+  linkTextBold: { color: '#ffffff', fontWeight: '600' },
 });
