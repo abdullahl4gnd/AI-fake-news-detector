@@ -1,3 +1,7 @@
+#views.py is the file that receives requests from the mobile app,
+#runs the AI models, saves to the database, and sends back the result.
+#It is the brain of the backend.
+
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,9 +19,7 @@ from textblob import TextBlob
 from urllib.parse import urlparse
 from pathlib import Path
 
-# ================================================================
 # Load ML model and vectorizer once at startup
-# ================================================================
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH      = BASE_DIR / 'AI' / 'Text Models' / 'Text Model' / 'best_fake_news_model.pkl'
 VECTORIZER_PATH = BASE_DIR / 'AI' / 'Text Models' / 'Text Model' / 'tfidf_vectorizer.pkl'
@@ -29,9 +31,8 @@ with open(VECTORIZER_PATH, 'rb') as f:
     vectorizer = pickle.load(f)
 
 
-# ================================================================
 # Trusted and fake source lists
-# ================================================================
+
 TRUSTED_SOURCES = [
     'reuters.com', 'bbc.com', 'bbc.co.uk', 'apnews.com',
     'npr.org', 'theguardian.com', 'nytimes.com', 'washingtonpost.com',
@@ -54,9 +55,7 @@ SENSATIONAL_WORDS = [
 ]
 
 
-# ================================================================
 # Helper functions
-# ================================================================
 def predict_text(text, confidence_threshold=0.40):
     text = re.sub(r'^[A-Z][A-Z\s,\.]{0,40}\(Reuters\)\s*..\s*', '', str(text))
     text_tfidf = vectorizer.transform([text])
